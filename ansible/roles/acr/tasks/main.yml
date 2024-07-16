@@ -1,0 +1,35 @@
+---
+- name: Login to ACR
+  ansible.builtin.command:
+    docker login devalexhub.azurecr.io -u devalexhub -pVmVnrb/5+/j9kqd2QoMPAmOW0eGRY45UFSQym8eKsO+ACRCRSS+q
+
+- name: Pull nginx from docker library
+  ansible.builtin.docker_image:
+    name: docker.io/nginx:latest
+    source: pull
+
+- name: Tag image
+  ansible.builtin.command:
+    docker tag nginx:latest devalexhub.azurecr.io/nginx:latest
+
+- name: Clone my app
+  ansible.builtin.git:
+    name: https://github.com/dev-alex-ops/postgen
+    clone: yes
+    dest: ~/repos
+
+- name: Build dockerfile
+  community.docker.docker_image_build:
+    name: "devalexhub.azurecr.io/postgen:v1.0"
+    path: /home/devalexops/repos
+    dockerfile: Dockerfile
+      
+- name: Push nginx image to ACR
+  community.docker.docker_image_push:
+    name: "devalexhub.azurecr.io/postgen"
+    tag: v1.0
+    
+- name: Push custom app to ACR
+  community.docker.docker_image_push:
+    name: "devalexhub.azurecr.io/nginx:latest"
+    tag: latest

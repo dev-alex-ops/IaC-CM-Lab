@@ -1,0 +1,17 @@
+- name: Update repositories
+  become: yes
+  ansible.builtin.command:
+    apt update
+
+- name: Install Podman
+  become: yes
+  ansible.builtin.command:
+    apt install podman -y
+
+- name: Pull the web server image
+  ansible.builtin.command:
+    podman pull devalexhub.azurecr.io/nginx:latest
+
+- name: Run the web server container
+  ansible.builtin.command:
+    podman run -d --name webserver -p 8080:80 devalexhub.azurecr.io/nginx:latest

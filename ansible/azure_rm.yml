@@ -1,0 +1,7 @@
+plugin: azure_rm
+strict: True
+include_vm_resource_groups:
+  - CP2
+conditional_groups:
+  webapp: "'vm-webapp' in name"
+auth_source: auto

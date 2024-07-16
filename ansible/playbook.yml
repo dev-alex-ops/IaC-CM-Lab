@@ -1,0 +1,22 @@
+---
+- name: Setup ACR and images 
+  hosts: localhost
+  tasks:
+    - name: Pull, build, tag and push images to ACR
+      include_role:
+        name: acr
+
+- name: Setup Webserver
+  hosts: webapp
+  tasks:
+    - name: Configure VM with Podman and deploy web server
+      include_role:
+        name: vm
+
+- name: Setup AKS
+  hosts: localhost
+  tasks:
+    - name: Deploy app to AKS
+      include_role:
+        name: aks
+      

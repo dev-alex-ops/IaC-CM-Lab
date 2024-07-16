@@ -1,0 +1,79 @@
+- name: Create Kubernetes secret for ACR
+  kubernetes.core.k8s:
+    state: present
+    namespace: default
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: acr-secret
+      data:
+        .dockerconfigjson: "{{ lookup('file', '/home/devalexops/.docker/config.json') | b64encode }}"
+      type: kubernetes.io/dockerconfigjson
+
+
+- name: Deploy application to AKS
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: myapp-deployment
+        namespace: default
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: myapp
+        template:
+          metadata:
+            labels:
+              app: myapp
+          spec:
+            containers:
+            - name: myapp
+              image: devalexhub.azurecr.io/postgen:v1.0
+              volumeMounts:
+              - mountPath: "/data"
+                name: data-volume
+            volumes:
+            - name: data-volume
+              persistentVolumeClaim:
+                claimName: myapp-pvc
+            imagePullSecrets:
+            - name: acr-secret
+
+- name: Create a Persistent Volume Claim (PVC)
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: myapp-pvc
+        namespace: default
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+- name: Expose deployment with LoadBalancer service
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: myapp-service
+        namespace: default
+      spec:
+        selector:
+          app: myapp
+        ports:
+        - protocol: TCP
+          port: 1987
+          targetPort: 1987
+        type: LoadBalancer

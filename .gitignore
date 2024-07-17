@@ -5,6 +5,6 @@
 kubeconfig
 cp2key.pem
 secrets.yml
-ansible.cfg
+./ansible.cfg
 ./customApp/*
 customApp/

@@ -19,28 +19,28 @@
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        name: myapp-deployment
+        name: cp2-deployment
         namespace: default
       spec:
         replicas: 1
         selector:
           matchLabels:
-            app: myapp
+            app: cp2-aks
         template:
           metadata:
             labels:
-              app: myapp
+              app: cp2-aks
           spec:
             containers:
-            - name: myapp
-              image: devalexhub.azurecr.io/postgen:v1.0
+            - name: cp2-aks
+              image: "{{ acr_login_url }}/postgen:v1.0"
               volumeMounts:
               - mountPath: "/data"
                 name: data-volume
             volumes:
             - name: data-volume
               persistentVolumeClaim:
-                claimName: myapp-pvc
+                claimName: cp2-pvc
             imagePullSecrets:
             - name: acr-secret
 
@@ -51,7 +51,7 @@
       apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
-        name: myapp-pvc
+        name: cp2-pvc
         namespace: default
       spec:
         accessModes:
@@ -67,11 +67,11 @@
       apiVersion: v1
       kind: Service
       metadata:
-        name: myapp-service
+        name: cp2-service
         namespace: default
       spec:
         selector:
-          app: myapp
+          app: cp2-aks
         ports:
         - protocol: TCP
           port: 1987

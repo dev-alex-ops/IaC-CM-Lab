@@ -2,3 +2,8 @@
 *.tfvars
 *.tfstate
 *.tfstate*
+kubeconfig
+cp2key.pem
+secrets.yml
+ansible.cfg
+./customApp/*

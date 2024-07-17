@@ -1,15 +1,3 @@
-variable "location" {
-  type        = string
-  description = "Región por defecto de los recursos"
-  default     = "West Europe"
-}
-
-variable "resourceGroupName" {
-  type        = string
-  description = "Nombre por defecto del grupo de recursos"
-  default     = "UNIR"
-}
-
 variable "sku" {
   type        = string
   description = "Recursos de la máquina virtual"
@@ -20,6 +8,17 @@ variable "aks-sku" {
   type        = string
   description = "Recursos del clúster AKS"
   default     = "Standard_A2_v2"
+}
+
+variable "location" {
+  type        = string
+  description = "Región por defecto de los recursos"
+  default     = "West Europe"
+}
+
+variable "resourceGroupName" {
+  type        = string
+  description = "Nombre por defecto del grupo de recursos"
 }
 
 variable "suscriptionId" {

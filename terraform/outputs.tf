@@ -33,7 +33,7 @@ output "ssh_private_key_file" {
   sensitive   = true
 }
 
-output "vm-admin-username" {
+output "vm_admin_username" {
   description = "Usuario de acceso a la máquina virtual"
   value = azurerm_linux_virtual_machine.tf-vm.admin_username
   sensitive = true

@@ -10,8 +10,8 @@
 
 - name: Pull the web server image
   ansible.builtin.command:
-    podman pull devalexhub.azurecr.io/nginx:latest
+    podman pull {{ acr_login_url }}/nginx:latest
 
 - name: Run the web server container
   ansible.builtin.command:
-    podman run -d --name webserver -p 8080:80 devalexhub.azurecr.io/nginx:latest
+    podman run -d --name webserver -p 8080:80 {{ acr_login_url }}/nginx:latest

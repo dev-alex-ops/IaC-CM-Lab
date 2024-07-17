@@ -1,6 +1,8 @@
 ---
 - name: Setup ACR and images 
   hosts: localhost
+  vars_files: 
+    - secrets.yml
   tasks:
     - name: Pull, build, tag and push images to ACR
       include_role:
@@ -8,6 +10,8 @@
 
 - name: Setup Webserver
   hosts: webapp
+  vars_files: 
+    - secrets.yml
   tasks:
     - name: Configure VM with Podman and deploy web server
       include_role:
@@ -15,6 +19,8 @@
 
 - name: Setup AKS
   hosts: localhost
+  vars_files: 
+    - secrets.yml
   tasks:
     - name: Deploy app to AKS
       include_role:

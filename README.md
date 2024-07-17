@@ -8,8 +8,6 @@ La VM alojará simplemente un servidor web accesible desde el puerto 8080, con l
 
 El código que despliega la infraestructura está alojado en la carpeta **terraform**, mientras que el CM se encuentra en la carpeta **Ansible**. 
 
-A modo de extra para dicha práctica, se ha diseñado el modo de automatizar el despliegue de estos servicios a través de una Pipeline, función que no ha podido ser añadida ya que requiere del uso de Service Principals de Azure y la cuenta de estudiante empleada para dicha práctica no dispone de permisos para crear estos recursos en Azure.
-
 ---
 
 ### Terraform
@@ -105,6 +103,20 @@ A continuación se resumen los pasos de cada uno de los roles:
 
 ---
 
-## Integración entre soluciones y automatización del proceso
+## Explicación del Proyecto entregado e hitos en el proceso
+A lo largo del ejercicio, he ido encontrando algunos problemas para llegar al punto al que quería llegar, que era la integración de este proyecto con el repositorio de Azure DevOps, para integrar este de manera sencilla con el CI/CD de Pipelines/Releases de esta misma plataforma, y con esta desplegar a los propios servicios de Azure, extendiendo así el rango de expansión de la práctica. 
+
+El primero, que ha sido el que más impedimento me ha supuesto, es que para poder lanzar un Agent en Azure DevOps, este debe tener acceso al AZ-CLI, y para ello necesitaría crear un service principal, pero la licencia de estudiante brindada no permite esto, por lo que lo único posible es automatizarlo con un script ejecutado en local que automatiza todos los pasos a realizar para que la infraestructura pase de 0 a desplegada en un solo click y de manera interactiva.
+
+Para poder desplegar esta práctica desde un equipo local cualquiera, se requieren una serie de dependencias:
+- Acceso a una cuenta de Azure con una Suscripción Activa y un Tenant
+- Dependencias de software necesarias:
+    - Az-cli
+    - Terraform
+    - Ansible (+módulos mencionados anteriormente)
+    - Docker / Podman (El proyecto usa ambas tecnologías, pero el host que lanza la aplicación emplea Docker. Pueden hacerse las modificaciones sencillas en los correspondientes ficheros de configuración de Ansible --***Main.yml del rol AKS y el rol ACR***-- y en el script ejecutable de bash)
+    - Kubectl, ya que lo emplearemos para conectar con el cluster AKS
+- Darle permisos de ejecución al 
+
 
 

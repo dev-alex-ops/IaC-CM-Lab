@@ -8,6 +8,10 @@
   ansible.builtin.command:
     apt install podman -y
 
+- name: Login to ACR
+  ansible.builtin.command:
+    podman login {{ acr_login_url }} -u {{ acr_username }} -p{{ acr_password }}
+
 - name: Pull the web server image
   ansible.builtin.command:
     podman pull {{ acr_login_url }}/nginx:latest

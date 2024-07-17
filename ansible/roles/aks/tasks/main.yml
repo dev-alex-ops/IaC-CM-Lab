@@ -2,6 +2,7 @@
   kubernetes.core.k8s:
     state: present
     namespace: default
+    kubeconfig: ~/.kube/config
     definition:
       apiVersion: v1
       kind: Secret
@@ -15,6 +16,7 @@
 - name: Deploy application to AKS
   kubernetes.core.k8s:
     state: present
+    kubeconfig: ~/.kube/config
     definition:
       apiVersion: apps/v1
       kind: Deployment
@@ -47,6 +49,7 @@
 - name: Create a Persistent Volume Claim (PVC)
   kubernetes.core.k8s:
     state: present
+    kubeconfig: ~/.kube/config
     definition:
       apiVersion: v1
       kind: PersistentVolumeClaim
@@ -63,6 +66,7 @@
 - name: Expose deployment with LoadBalancer service
   kubernetes.core.k8s:
     state: present
+    kubeconfig: ~/.kube/config
     definition:
       apiVersion: v1
       kind: Service

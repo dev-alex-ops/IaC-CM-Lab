@@ -1,16 +1,5 @@
 plugin: azure.azcollection.azure_rm
+strict: True
+conditional_groups:
+  webapp: "'vm-webapp' in name"
 auth_source: auto
-keyed_groups:
-  - key: tags
-    prefix: tag
-  - key: location
-    prefix: location
-  - key: security_group
-    prefix: security_group
-# plugin: azure.azcollection.azure_rm
-# strict: True
-# include_vm_resource_groups:
-#   - CP2
-# conditional_groups:
-#   webapp: "'vm-webapp' in name"
-# auth_source: auto

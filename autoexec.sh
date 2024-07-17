@@ -9,8 +9,7 @@ cd ./terraform && terraform init
 terraform apply --auto-approve
 
 ## Configurar el sistema host con las configuraciones propuestas de Azure
-terraform output -raw kube_config > ../kubeconfig
-export KUBECONFIG=../kubeconfig
+terraform output -raw kube_config > ~/.kube/config
 terraform output -raw ssh_private_key_file > ../cp2key.pem
 export ssh_private_key_file=$(echo "../cp2key.pem")
 chmod 600 ../cp2key.pem
@@ -29,13 +28,18 @@ acr_username: ${acr_username}
 EOF
 
 cat <<EOF >> ../ansible/ansible.cfg 
-[Defaults]
-vm_admin_user = ${vm_admin_username}
-ssh_private_key_file = ${ssh_private_key_file}
+[defaults]
+remote_user = ${vm_admin_username}
+private_key_file = ${ssh_private_key_file}
 vm_public_ip = ${vm_public_ip}
+inventory = ./azure_rm.yaml
+host_key_checking = False
+
+[inventory]
+enable_plugins = azure.azcollection.azure_rm
 EOF
 
 ##  Cambia de directorio a Ansible para securizar los secrets y lanzar los playbooks
-# cd ../ansible
-# ansible-vault encrypt secrets.yml
-# ansible-playbook -i hosts.ini -i azure_rm.yml playbook.yml --ask-vault-pass
+cd ../ansible
+ansible-vault encrypt secrets.yml
+ansible-playbook -i hosts.ini -i azure_rm.yaml playbook.yml --ask-vault-pass

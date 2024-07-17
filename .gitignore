@@ -7,4 +7,4 @@ cp2key.pem
 secrets.yml
 ansible.cfg
 ./customApp/*
-./customApp
+customApp/

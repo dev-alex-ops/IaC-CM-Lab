@@ -1,7 +1,17 @@
 ## Lanza az-login
+echo "**************************************************"
+echo "***           Logging Azure CLI                ***"
+echo "**************************************************"
+echo ""
+
 az login
 
 ## Cambia al directorio de Terraform y ejecuta Terraform Init
+echo ""
+echo "**************************************************"
+echo "***          Executing Terraform               ***"
+echo "**************************************************"
+echo ""
 cd ./terraform && terraform init
 
 ## Ejecuta Terraform apply y terraform plan si el apply funciona (Si no se modifica el código de Terraform, debe funcionar)
@@ -9,7 +19,13 @@ cd ./terraform && terraform init
 terraform apply --auto-approve
 
 ## Configurar el sistema host con las configuraciones propuestas de Azure
-terraform output -raw kube_config > ~/.kube/config
+echo ""
+echo "**************************************************"
+echo "***          Exporting TF Outputs              ***"
+echo "**************************************************"
+echo ""
+
+terraform output -raw kube_config > ~/.kube/aksconfig
 terraform output -raw ssh_private_key_file > ../cp2key.pem
 export ssh_private_key_file=$(echo "../cp2key.pem")
 chmod 600 ../cp2key.pem
@@ -20,6 +36,12 @@ export acr_password=$(terraform output -raw acr_password)
 export acr_username=$(terraform output -raw acr_username)
 export vm_admin_username=$(terraform output -raw vm_admin_username)
 export vm_public_ip=$(terraform output -raw vm_public_ip)
+
+echo ""
+echo "**************************************************"
+echo "***          Seeding Ansible files             ***"
+echo "**************************************************"
+echo ""
 
 cat <<EOF >> ../ansible/secrets.yml 
 acr_login_url: ${acr_login_url}
@@ -41,5 +63,19 @@ EOF
 
 ##  Cambia de directorio a Ansible para securizar los secrets y lanzar los playbooks
 cd ../ansible
+
+echo ""
+echo "**************************************************"
+echo "***       Encrypting Ansible secrets           ***"
+echo "**************************************************"
+echo ""
+
 ansible-vault encrypt secrets.yml
+
+echo ""
+echo "**************************************************"
+echo "***           Executing Ansible                ***"
+echo "**************************************************"
+echo ""
+
 ansible-playbook -i hosts.ini -i azure_rm.yaml playbook.yml --ask-vault-pass

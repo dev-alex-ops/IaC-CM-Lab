@@ -20,14 +20,14 @@
 
 - name: Build dockerfile
   community.docker.docker_image_build:
-    name: "{{ acr_login_url }}/postgen:v1.0"
+    name: "{{ acr_login_url }}/postgen:v0.0.1"
     path: ../customApp
     dockerfile: Dockerfile
       
 - name: Push nginx image to ACR
   community.docker.docker_image_push:
     name: "{{ acr_login_url }}/postgen"
-    tag: v1.0
+    tag: v0.0.1
     
 - name: Push custom app to ACR
   community.docker.docker_image_push:

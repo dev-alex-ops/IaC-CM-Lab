@@ -1,16 +1,21 @@
 ---
-- name: Login to ACR
-  ansible.builtin.command:
-    docker login {{ acr_login_url }} -u {{ acr_username }} -p{{ acr_password }}
+- name: Log into ACR
+  community.docker.docker_login:
+    registry_url: "{{ acr_login_url }}"
+    username: "{{ acr_username }}"
+    password: "{{ acr_password }}"
+    reauthorize: true
 
 - name: Pull nginx from docker library
   ansible.builtin.docker_image:
     name: docker.io/nginx:latest
     source: pull
 
-- name: Tag image
-  ansible.builtin.command:
-    docker tag nginx:latest {{ acr_login_url }}/nginx:latest
+- name: Tag Nginx image
+  community.docker.docker_image_tag:
+    name: docker.io/nginx:latest
+    repository:
+      - "{{ acr_login_url }}/nginx:casopractico2"
 
 - name: Clone my app
   ansible.builtin.git:
@@ -20,16 +25,16 @@
 
 - name: Build dockerfile
   community.docker.docker_image_build:
-    name: "{{ acr_login_url }}/postgen:v0.0.1"
+    name: "{{ acr_login_url }}/postgen:casopractico2"
     path: ../customApp
     dockerfile: Dockerfile
       
 - name: Push nginx image to ACR
   community.docker.docker_image_push:
-    name: "{{ acr_login_url }}/postgen"
-    tag: v0.0.1
+    name: "{{ acr_login_url }}/nginx"
+    tag: casopractico2
     
 - name: Push custom app to ACR
   community.docker.docker_image_push:
-    name: "{{ acr_login_url }}/nginx:latest"
-    tag: latest
+    name: "{{ acr_login_url }}/postgen"
+    tag: casopractico2

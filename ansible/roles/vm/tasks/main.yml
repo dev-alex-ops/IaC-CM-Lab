@@ -1,21 +1,55 @@
 - name: Update repositories
   become: yes
-  ansible.builtin.command:
-    apt update
-
-- name: Install Podman
-  become: yes
-  ansible.builtin.command:
-    apt install podman -y
+  ansible.builtin.apt:
+    name: podman
+    update_cache: yes
 
 - name: Login to ACR
-  ansible.builtin.command:
-    podman login {{ acr_login_url }} -u {{ acr_username }} -p{{ acr_password }}
+  containers.podman.podman_login:
+    username: "{{ acr_username }}"
+    password: "{{ acr_password }}"
+    registry: "{{ acr_login_url }}"
 
-- name: Pull the web server image
-  ansible.builtin.command:
-    podman pull {{ acr_login_url }}/nginx:latest
+- name: Pull nginx image
+  containers.podman.podman_image:
+    name: "{{ acr_login_url }}/nginx:casopractico2"
 
-- name: Run the web server container
-  ansible.builtin.command:
-    podman run -d --name webserver -p 8080:80 {{ acr_login_url }}/nginx:latest
+- name: Run container
+  containers.podman.podman_container:
+    name: webserver
+    image: "{{ acr_login_url }}/nginx:casopractico2"
+    state: started
+    detach: true
+    volume:
+      - "config:/etc/nginx"
+    ports:
+      - "8080:80"
+
+- name: Install apache2-utils
+  become: yes
+  ansible.builtin.apt:
+    name: apache2-utils
+
+- name: Install Python3-passlib module
+  become: yes
+  ansible.builtin.apt:
+    name: python3-passlib
+
+- name: Create passwd user
+  community.general.htpasswd:
+    state: present
+    path: ~/.local/share/containers/storage/volumes/config/_data/.htpasswd
+    name: "{{ nginx_user }}"
+    password: "{{ nginx_password }}"
+    mode: 0640
+
+- name: Set basic auth on /
+  ansible.builtin.lineinfile:
+    path: ~/.local/share/containers/storage/volumes/config/_data/conf.d/default.conf
+    insertafter: 'index.html index.htm;'
+    line: "        auth_basic Auth;\n        auth_basic_user_file /etc/nginx/.htpasswd;"
+  
+- name: Restart container
+  containers.podman.podman_container:
+    name: webserver
+    restart: true

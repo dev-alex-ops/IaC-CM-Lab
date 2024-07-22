@@ -9,7 +9,7 @@
       metadata:
         name: acr-secret
       data:
-        .dockerconfigjson: "{{ lookup('file', '/home/devalexops/.docker/config.json') | b64encode }}"
+        .dockerconfigjson: "{{ lookup('file', '~/.docker/config.json') | b64encode }}"
       type: kubernetes.io/dockerconfigjson
 
 
@@ -35,9 +35,9 @@
           spec:
             containers:
             - name: cp2-aks
-              image: "{{ acr_login_url }}/postgen:v0.0.1"
+              image: "{{ acr_login_url }}/postgen:casopractico2"
               volumeMounts:
-              - mountPath: "./data"
+              - mountPath: /app/data
                 name: data-volume
             volumes:
             - name: data-volume

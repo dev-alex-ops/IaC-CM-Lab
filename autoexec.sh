@@ -47,6 +47,9 @@ cat <<EOF >> ../ansible/secrets.yml
 acr_login_url: ${acr_login_url}
 acr_password: ${acr_password} 
 acr_username: ${acr_username} 
+vm_admin_username: ${vm_admin_username}
+nginx_user: user
+nginx_password: 1234
 EOF
 
 cat <<EOF >> ../ansible/ansible.cfg 

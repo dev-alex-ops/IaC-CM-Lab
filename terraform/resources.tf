@@ -182,7 +182,7 @@ resource "azurerm_kubernetes_cluster" "tf-aks" {
 
   default_node_pool {
     name       = "default"
-    node_count = 2
+    node_count = 1
     vm_size    = var.aks-sku
   }
 
